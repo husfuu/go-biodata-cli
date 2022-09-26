@@ -26,3 +26,19 @@ func getBiodatas() (biodatas []biodata) {
 	}
 	return biodatas
 }
+
+func addBiodatas(biodatas []biodata) {
+
+	biodataByte, err := json.Marshal(biodatas)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile("./data/biodatas.json", biodataByte, 0644)
+
+	if err != nil {
+		panic(err)
+	}
+
+}

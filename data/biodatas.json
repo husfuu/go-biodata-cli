@@ -1,14 +1,1 @@
-[
-  {
-    "Id": "1",
-    "Name": "M. Husni Nur Fadillah",
-    "Address": "Banjarbaru",
-    "Reason": "Pengen jadi sepuh backend"
-  },
-  {
-    "Id": "2",
-    "Name": "Rhifaa Dhiyaa Zahroo",
-    "Address": "Banjarbaru",
-    "Reason": "Pengen jadi sepuh frontend"
-  }
-]
+[{"Id":"1","Name":"M. Husni Nur Fadillah","Address":"Banjarbaru","Reason":"Pengen jadi sepuh backend"},{"Id":"2","Name":"Rhifaa Dhiyaa Zahroo","Address":"Banjarbaru","Reason":"Pengen jadi sepuh frontend"},{"Id":"3","Name":"husfuu","Address":"kalsel","Reason":"jadi hokage"}]
