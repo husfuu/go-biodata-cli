@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/alexeyco/simpletable"
 )
@@ -23,6 +24,11 @@ func main() {
 	addAddress := addCmd.String("address", "", "Address")
 	addReason := addCmd.String("reason", "", "Reason")
 
+	// flag for "delete biodata" command
+	deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
+	// input for "delete biodata" command
+	deleteId := deleteCmd.String("id", "", "Biodata Id")
+
 	if len(os.Args) < 2 {
 		fmt.Print("expected 'get' command")
 		os.Exit(1)
@@ -30,8 +36,9 @@ func main() {
 		HandleGet(getCmd, getAll, getId)
 	} else if os.Args[1] == "add" {
 		HandleAdd(addCmd, addId, addName, addAddress, addReason)
+	} else if os.Args[1] == "delete" {
+		HandleDelete(deleteCmd, deleteId)
 	}
-
 }
 
 func HandleGet(getCmd *flag.FlagSet, isAll *bool, id *string) {
@@ -99,7 +106,7 @@ func ValidateBiodata(addCmd *flag.FlagSet, id *string, name *string, address *st
 	addCmd.Parse(os.Args[2:])
 
 	if *id == "" || *name == "" || *address == "" || *reason == "" {
-		fmt.Print("please input all field that required for adding biodata!")
+		fmt.Println("please input all field that required for adding biodata!")
 		addCmd.PrintDefaults()
 		os.Exit(1)
 	}
@@ -121,4 +128,41 @@ func HandleAdd(addCmd *flag.FlagSet, id *string, name *string, address *string, 
 	biodatas = append(biodatas, biodata)
 
 	addBiodatas(biodatas)
+}
+
+func RemoveBiodataIdx(s []biodata, index int) []biodata {
+	return s[:index+copy(s[index:], s[index+1:])]
+
+}
+
+func HandleDelete(deletCmd *flag.FlagSet, id *string) {
+	deletCmd.Parse(os.Args[2:])
+
+	if *id == "" {
+		fmt.Println("please input the id of biodata that you want to delete!")
+		deletCmd.PrintDefaults()
+		os.Exit(1)
+	}
+	biodatas := getBiodatas()
+
+	if *id != "" {
+		id := *id
+
+		for _, biodata := range biodatas {
+			if id == biodata.Id {
+				id, err := strconv.Atoi(id)
+				if err != nil {
+					panic(err)
+				} else {
+					fmt.Print("jalannnn")
+					biodatas = RemoveBiodataIdx(biodatas, id-1)
+					fmt.Println(biodatas)
+					deleteBiodatas(biodatas)
+				}
+
+			}
+		}
+
+	}
+
 }
