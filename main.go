@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -24,6 +25,11 @@ func main() {
 	addAddress := addCmd.String("address", "", "Address")
 	addReason := addCmd.String("reason", "", "Reason")
 
+	// flag for "edit biodata" command
+	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
+	// input for "edit biodata" command
+	editId := editCmd.String("id", "", "Biodata Id")
+
 	// flag for "delete biodata" command
 	deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
 	// input for "delete biodata" command
@@ -38,11 +44,14 @@ func main() {
 		HandleAdd(addCmd, addId, addName, addAddress, addReason)
 	} else if os.Args[1] == "delete" {
 		HandleDelete(deleteCmd, deleteId)
+	} else if os.Args[1] == "edit" {
+		HandleEdit(editCmd, editId)
 	}
 }
 
 func HandleGet(getCmd *flag.FlagSet, isAll *bool, id *string) {
 	getCmd.Parse(os.Args[2:])
+
 	table := simpletable.New()
 
 	if *isAll == false && *id == "" {
@@ -127,7 +136,53 @@ func HandleAdd(addCmd *flag.FlagSet, id *string, name *string, address *string, 
 	biodatas := getBiodatas()
 	biodatas = append(biodatas, biodata)
 
-	addBiodatas(biodatas)
+	writeBiodatas(biodatas)
+}
+
+func HandleEdit(editCmd *flag.FlagSet, id *string) {
+	editCmd.Parse(os.Args[2:])
+
+	if *id == "" {
+		fmt.Println("please input the id of biodata that you to edit!")
+		editCmd.PrintDefaults()
+		os.Exit(1)
+	}
+
+	biodatas := getBiodatas()
+
+	if *id != "" {
+		id := *id
+		fmt.Println(id)
+		for _, biodata := range biodatas {
+			if id == biodata.Id {
+				scanner := bufio.NewScanner(os.Stdin)
+
+				fmt.Println("Enter the name: ")
+				scanner.Scan()
+				name := scanner.Text()
+
+				fmt.Println("Enter the address: ")
+				scanner.Scan()
+				address := scanner.Text()
+
+				fmt.Println("Enter the reason: ")
+				scanner.Scan()
+				reason := scanner.Text()
+
+				biodata.Name = name
+				biodata.Address = address
+				biodata.Reason = reason
+
+				biodatas = append(biodatas, biodata)
+				id, _ := strconv.Atoi(id)
+				biodatas = RemoveBiodataIdx(biodatas, id-1)
+
+				writeBiodatas(biodatas)
+				os.Exit(1)
+			}
+		}
+	}
+
 }
 
 func RemoveBiodataIdx(s []biodata, index int) []biodata {
@@ -154,10 +209,8 @@ func HandleDelete(deletCmd *flag.FlagSet, id *string) {
 				if err != nil {
 					panic(err)
 				} else {
-					fmt.Print("jalannnn")
 					biodatas = RemoveBiodataIdx(biodatas, id-1)
-					fmt.Println(biodatas)
-					deleteBiodatas(biodatas)
+					writeBiodatas(biodatas)
 				}
 
 			}
