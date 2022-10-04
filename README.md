@@ -1,6 +1,6 @@
 # Go-Biodata-CLI
 
-A CLI app that can operate simple create, read, update and delete data with JSON data.
+A CLI app that can operate simple create, read, update and delete JSON data.
 
 ## Running this project locally
 
