@@ -60,7 +60,7 @@ result:
  3    Janna Avery       140-1888 Eu Av.                pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum.
  4    Maxwell Beasley   297-4652 Lobortis Street       Nulla semper tellus id nunc interdum feugiat. Sed nec metus
  5    Chastity Hyde     Ap #393-6549 Aliquet Ave       dictum placerat, augue. Sed molestie. Sed id risus quis diam
- 6    husfuu            isekai world                   wannabe main character
+ 6    husfuu            isekai world                   wannabe anime main character
 
 ```
 
@@ -73,7 +73,7 @@ go run biodata-cli edit -id="5"
 ### Delete Biodata
 
 ```
-go run biodata-cli -id="5"
+go run biodata-cli delete -id="5"
 ```
 
 ## Dev Dependencies
