@@ -20,7 +20,6 @@ func main() {
 	// flag for "add biodata" command
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	// input for "add biodata" command
-	addId := addCmd.String("id", "", "Biodata Id")
 	addName := addCmd.String("name", "", "Student name")
 	addAddress := addCmd.String("address", "", "Address")
 	addReason := addCmd.String("reason", "", "Reason")
@@ -41,7 +40,7 @@ func main() {
 	} else if os.Args[1] == "get" {
 		HandleGet(getCmd, getAll, getId)
 	} else if os.Args[1] == "add" {
-		HandleAdd(addCmd, addId, addName, addAddress, addReason)
+		HandleAdd(addCmd, addName, addAddress, addReason)
 	} else if os.Args[1] == "delete" {
 		HandleDelete(deleteCmd, deleteId)
 	} else if os.Args[1] == "edit" {
@@ -111,10 +110,10 @@ func HandleGet(getCmd *flag.FlagSet, isAll *bool, id *string) {
 
 }
 
-func ValidateBiodata(addCmd *flag.FlagSet, id *string, name *string, address *string, reason *string) {
+func ValidateBiodata(addCmd *flag.FlagSet, name *string, address *string, reason *string) {
 	addCmd.Parse(os.Args[2:])
 
-	if *id == "" || *name == "" || *address == "" || *reason == "" {
+	if *name == "" || *address == "" || *reason == "" {
 		fmt.Println("please input all field that required for adding biodata!")
 		addCmd.PrintDefaults()
 		os.Exit(1)
@@ -122,18 +121,29 @@ func ValidateBiodata(addCmd *flag.FlagSet, id *string, name *string, address *st
 
 }
 
-func HandleAdd(addCmd *flag.FlagSet, id *string, name *string, address *string, reason *string) {
+func HandleAdd(addCmd *flag.FlagSet, name *string, address *string, reason *string) {
 
-	ValidateBiodata(addCmd, id, name, address, reason)
+	ValidateBiodata(addCmd, name, address, reason)
+
+	biodatas := getBiodatas()
+
+	lastId := biodatas[len(biodatas)-1].Id
+
+	// string to int
+	intId, _ := strconv.Atoi(lastId)
+
+	intId += 1
+
+	// int to string
+	newId := strconv.Itoa(intId)
 
 	biodata := biodata{
-		Id:      *id,
+		Id:      newId,
 		Name:    *name,
 		Address: *address,
 		Reason:  *reason,
 	}
 
-	biodatas := getBiodatas()
 	biodatas = append(biodatas, biodata)
 
 	writeBiodatas(biodatas)
@@ -178,7 +188,6 @@ func HandleEdit(editCmd *flag.FlagSet, id *string) {
 				biodatas = RemoveBiodataIdx(biodatas, id-1)
 
 				writeBiodatas(biodatas)
-				os.Exit(1)
 			}
 		}
 	}
@@ -203,19 +212,17 @@ func HandleDelete(deletCmd *flag.FlagSet, id *string) {
 	if *id != "" {
 		id := *id
 
+		var idx int = 0
+
 		for _, biodata := range biodatas {
+
 			if id == biodata.Id {
-				id, err := strconv.Atoi(id)
-				if err != nil {
-					panic(err)
-				} else {
-					biodatas = RemoveBiodataIdx(biodatas, id-1)
-					writeBiodatas(biodatas)
-				}
-
+				biodatas = RemoveBiodataIdx(biodatas, idx)
+				writeBiodatas(biodatas)
+				return
 			}
+			idx += 1
 		}
-
+		fmt.Println("the id is not found")
 	}
-
 }
